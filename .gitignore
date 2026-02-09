@@ -4,3 +4,6 @@ dist
 .turbo
 .env
 workspace
+.DS_Store
+*.db-shm
+*.db-wal
