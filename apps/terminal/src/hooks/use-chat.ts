@@ -1,9 +1,26 @@
 import { useState, useCallback } from "react";
-import { client } from "./client";
+import { client } from "../lib/client";
 
 type TextPart = { type: "text"; text: string };
 type ReasoningPart = { type: "reasoning"; text: string };
-export type MessagePart = TextPart | ReasoningPart;
+type ToolCallPart = {
+  type: "tool-call";
+  toolName: string;
+  toolCallId: string;
+  args?: unknown;
+};
+type ToolResultPart = {
+  type: "tool-result";
+  toolName: string;
+  toolCallId: string;
+  result: unknown;
+  isError?: boolean;
+};
+export type MessagePart =
+  | TextPart
+  | ReasoningPart
+  | ToolCallPart
+  | ToolResultPart;
 
 export interface ChatMessage {
   id: string;
@@ -12,6 +29,11 @@ export interface ChatMessage {
 }
 
 type Status = "idle" | "streaming" | "error";
+
+
+// TODO: Generating thread/resource IDs on the client is bad practice.
+// This is for demo purposes only — in production, IDs should come from the server.
+const threadId = crypto.randomUUID();
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -38,9 +60,10 @@ export function useChat() {
     try {
       const agent = client.getAgent("coding-agent");
       const stream = await agent.stream(text, {
+        maxSteps: 999,
         memory: {
-          resource: "USER-ID",
-          thread: "THREAD-ID",
+          resource: "USER_ID",
+          thread: threadId,
         },
       });
 
@@ -93,6 +116,59 @@ export function useChat() {
             }
             case "error": {
               setError(new Error(String(chunk.payload)));
+              break;
+            }
+            case "tool-call": {
+              setMessages((prev) => {
+                const updated = [...prev];
+                const last = { ...updated[updated.length - 1] };
+                const parts = [...last.parts];
+                parts.push({
+                  type: "tool-call",
+                  toolName: chunk.payload.toolName,
+                  toolCallId: chunk.payload.toolCallId,
+                  args: chunk.payload.args,
+                });
+                last.parts = parts;
+                updated[updated.length - 1] = last;
+                return updated;
+              });
+              break;
+            }
+            case "tool-result": {
+              setMessages((prev) => {
+                const updated = [...prev];
+                const last = { ...updated[updated.length - 1] };
+                const parts = [...last.parts];
+                parts.push({
+                  type: "tool-result",
+                  toolName: chunk.payload.toolName,
+                  toolCallId: chunk.payload.toolCallId,
+                  result: chunk.payload.result,
+                  isError: chunk.payload.isError,
+                });
+                last.parts = parts;
+                updated[updated.length - 1] = last;
+                return updated;
+              });
+              break;
+            }
+            case "tool-error": {
+              setMessages((prev) => {
+                const updated = [...prev];
+                const last = { ...updated[updated.length - 1] };
+                const parts = [...last.parts];
+                parts.push({
+                  type: "tool-result",
+                  toolName: chunk.payload.toolName,
+                  toolCallId: chunk.payload.toolCallId,
+                  result: chunk.payload.error,
+                  isError: true,
+                });
+                last.parts = parts;
+                updated[updated.length - 1] = last;
+                return updated;
+              });
               break;
             }
           }

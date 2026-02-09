@@ -2,7 +2,8 @@ import React from "react";
 import { render, Box, Text } from "ink";
 import TextInput from "ink-text-input";
 import Spinner from "ink-spinner";
-import { useChat } from "./use-chat";
+import { useChat } from "./hooks/use-chat";
+import { cleanToolName, formatToolArgs, formatToolResult } from "./lib/tool-display";
 
 function App() {
   const [input, setInput] = React.useState("");
@@ -44,6 +45,27 @@ function App() {
                     );
                   case "text":
                     return <Text key={key}>{part.text}</Text>;
+                  case "tool-call":
+                    return (
+                      <Box key={key} marginLeft={1}>
+                        <Text color="white">[</Text>
+                        <Text color="magenta" bold>
+                          {cleanToolName(part.toolName)}
+                        </Text>
+                        <Text color="white">]</Text>
+                        <Text color="whiteBright">
+                          {" "}{formatToolArgs(part.toolName, part.args)}
+                        </Text>
+                      </Box>
+                    );
+                  case "tool-result":
+                    return (
+                      <Box key={key} marginLeft={3}>
+                        <Text color={part.isError ? "red" : "cyan"}>
+                          {">"} {formatToolResult(part.toolName, part.result, part.isError)}
+                        </Text>
+                      </Box>
+                    );
                   default:
                     return null;
                 }
@@ -72,12 +94,16 @@ function App() {
         <Text bold color="green">
           {">"}{" "}
         </Text>
-        <TextInput
-          value={input}
-          onChange={setInput}
-          onSubmit={onSubmit}
-          placeholder={isLoading ? "Waiting..." : "Ask something..."}
-        />
+        {input === "" ? (
+          <>
+            <TextInput value={input} onChange={setInput} onSubmit={onSubmit} />
+            <Text color="whiteBright">
+              {isLoading ? "Waiting..." : "Ask something..."}
+            </Text>
+          </>
+        ) : (
+          <TextInput value={input} onChange={setInput} onSubmit={onSubmit} />
+        )}
       </Box>
     </Box>
   );
