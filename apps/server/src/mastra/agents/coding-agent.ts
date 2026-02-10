@@ -1,4 +1,18 @@
 import { Agent } from "@mastra/core/agent";
+import {
+  Workspace,
+  LocalFilesystem,
+  LocalSandbox,
+} from "@mastra/core/workspace";
+
+const workspace = new Workspace({
+  filesystem: new LocalFilesystem({
+    basePath: "./workspace",
+  }),
+  sandbox: new LocalSandbox({
+    workingDirectory: "./workspace",
+  }),
+});
 
 export const codingAgent = new Agent({
   id: "coding-agent",
@@ -32,4 +46,15 @@ When a user provides a repository URL:
 - When reading files, focus on the most important ones first (README, entry points, configs).
 - Keep your answers grounded in what you actually find in the code. Do not speculate.
 - If the user asks a specific question, focus on answering that rather than doing a full overview.`,
+  workspace: ({ requestContext }) => {
+    if (requestContext.get("mode") === "plan") {
+      return new Workspace({
+        filesystem: new LocalFilesystem({
+          basePath: "./workspace",
+        }),
+      });
+    }
+
+    return workspace;
+  },
 });
