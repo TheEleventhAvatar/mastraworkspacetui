@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "mastra dev",
-    "build": "mastra build"
+    "build": "mastra build",
+    "autonomous": "tsx src/autonomous-cli.ts",
+    "agent": "tsx src/autonomous-cli-v2.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.0.0",
@@ -12,7 +14,17 @@
     "@mastra/libsql": "^1.2.0",
     "@mastra/loggers": "^1.0.1",
     "@mastra/observability": "^1.2.0",
+    "chalk": "^5.6.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.22.1",
     "mastra": "1.2.0",
+    "ora": "^9.3.0",
     "zod": "^3.22.0"
-  }
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }

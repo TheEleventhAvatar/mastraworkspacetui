@@ -8,9 +8,16 @@ import {
   SensitiveDataFilter,
 } from "@mastra/observability";
 import { codingAgent } from "./agents/coding-agent";
+import { plannerAgent, executorAgent, verifierAgent, fixerAgent } from "../autonomous/agents";
 
 export const mastra = new Mastra({
-  agents: { codingAgent },
+  agents: { 
+    codingAgent,
+    plannerAgent,
+    executorAgent,
+    verifierAgent,
+    fixerAgent,
+  },
   storage: new LibSQLStore({
     id: "mastra-storage",
     url: "file:./mastra.db",
