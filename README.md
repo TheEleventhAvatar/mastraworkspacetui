@@ -15,13 +15,13 @@ Terminal (Ink/React TUI)
         | HTTP stream (localhost:4111)
         v
 Mastra Server
-  ├── Coding Agent (Gemini 3 Flash via OpenRouter)
+  ├── Coding Agent (OpenAI GPT-4)
   └── Workspace (LocalSandbox: file I/O + shell exec)
 ```
 
 ## Tech Stack
 
-- **AI**: Mastra framework, Google Gemini 3 Flash Preview (via OpenRouter)
+- **AI**: Mastra framework, OpenAI GPT-4
 - **Server**: `@mastra/core`, `@mastra/libsql` (SQLite storage), `@mastra/loggers`
 - **Terminal**: Ink 5, React 18, tsup
 - **Monorepo**: Turborepo, Bun
@@ -34,7 +34,7 @@ bun install
 
 # Configure environment
 cp apps/server/.env.example apps/server/.env
-# Add your OpenRouter API key to apps/server/.env
+# Add your OpenAI API key to apps/server/.env
 ```
 
 ## Usage
@@ -52,7 +52,7 @@ bun run dev:terminal   # TUI client (needs server running)
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `OPENROUTER_API_KEY` | Yes | [OpenRouter](https://openrouter.ai) API key |
+| `OPENAI_API_KEY` | Yes | [OpenAI](https://platform.openai.com) API key |
 
 ## Agent Capabilities
 

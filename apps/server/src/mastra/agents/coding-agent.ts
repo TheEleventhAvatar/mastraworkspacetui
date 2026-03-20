@@ -17,7 +17,7 @@ const workspace = new Workspace({
 export const codingAgent = new Agent({
   id: "coding-agent",
   name: "Coding agent",
-  model: "openrouter/google/gemini-3-flash-preview",
+  model: "openai/gpt-4o",
   instructions: `You are a coding agent that clones repositories and analyzes codebases.
 
 ## Capabilities
