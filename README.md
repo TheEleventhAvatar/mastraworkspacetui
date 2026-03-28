@@ -1,6 +1,6 @@
 # mastra-tui
 
-A terminal-based AI coding agent powered by [Mastra](https://mastra.ai). Chat with an AI assistant that can clone repos, explore codebases, read/write files, and execute shell commands -- all from your terminal.demo text
+A terminal-based AI coding agent powered by [Mastra](https://mastra.ai). Chat with an AI assistant that can clone repos, explore codebases, read/write files, and execute shell commands -- all from your terminal.demo text LOLL
 
 
 ## Architecture
